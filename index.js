@@ -18,13 +18,21 @@ async function run() {
     try {
       const db = client.db("shareKnowledge");
       const categoriesCollection = db.collection("categories");
+      const productsCollection = db.collection("products");
 
       //categoris
       app.get('/categories',async(req,res)=>{
         const query = {};
         const categories = await categoriesCollection.find(query).toArray();
         res.send(categories)
-      })
+      });
+      app.get('/category/:id',async(req,res)=>{
+        const id = req.params.id;
+        const query = {cat_id:id};
+        const categories = await productsCollection.find(query).toArray();
+        res.send(categories)
+      });
+
     
     } finally {
       
