@@ -21,6 +21,7 @@ async function run() {
       const productsCollection = db.collection("products");
       const usersCollection = db.collection("users");
       const bookingsCollection = db.collection("bookings");
+      const advertiseCollection = db.collection("advertise");
 
       //categoris
       app.get('/categories',async(req,res)=>{
@@ -106,6 +107,17 @@ app.delete('/products/:id', async (req, res) => {
   const result = await productsCollection.deleteOne(filter);
   res.send(result);
 })
+app.post('/advertise', async (req, res) => {
+  const products = req.body;
+  const result = await advertiseCollection.insertOne(products);
+  res.send(result);
+});
+app.get('/advertise',async(req,res)=>{
+  const query = {};
+  const categories = await advertiseCollection.find(query).toArray();
+  res.send(categories)
+});
+
     } finally {
       
     }
