@@ -19,6 +19,8 @@ async function run() {
       const db = client.db("shareKnowledge");
       const categoriesCollection = db.collection("categories");
       const productsCollection = db.collection("products");
+      const usersCollection = db.collection("users");
+      const bookingsCollection = db.collection("bookings");
 
       //categoris
       app.get('/categories',async(req,res)=>{
@@ -32,8 +34,18 @@ async function run() {
         const categories = await productsCollection.find(query).toArray();
         res.send(categories)
       });
-
-    
+     //users
+     app.post('/users', async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+  });
+    //booking
+    app.post('/bookings', async (req, res) => {
+      const booking = req.body;
+      const result = await bookingsCollection.insertOne(booking);
+      res.send(result);
+  });
     } finally {
       
     }
