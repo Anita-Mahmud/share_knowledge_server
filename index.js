@@ -49,8 +49,8 @@ async function run() {
     //all buyers
     app.get('/users/buyers',async(req,res)=>{
       const query = {role: 'Buyer'};
-      const sellers = await usersCollection.find(query).toArray();
-      res.send(sellers)
+      const buyers = await usersCollection.find(query).toArray();
+      res.send(buyers)
     });
     app.delete('/users/:id', async (req, res) => {
       const id = req.params.id;
@@ -89,6 +89,23 @@ async function run() {
     const bookings = await bookingsCollection.find(query).toArray();
     res.send(bookings);
 });
+app.get('/products', async (req, res) => {
+  const name = req.query.name;
+  const query = { seller_name: name  };
+  const user = await productsCollection.find(query).toArray();
+  res.send(user);
+})
+app.post('/products', async (req, res) => {
+  const products = req.body;
+  const result = await productsCollection.insertOne(products);
+  res.send(result);
+});
+app.delete('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  const filter = { _id: ObjectId(id) };
+  const result = await productsCollection.deleteOne(filter);
+  res.send(result);
+})
     } finally {
       
     }
