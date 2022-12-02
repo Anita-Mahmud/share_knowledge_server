@@ -21,7 +21,6 @@ async function run() {
       const productsCollection = db.collection("products");
       const usersCollection = db.collection("users");
       const bookingsCollection = db.collection("bookings");
-      const advertiseCollection = db.collection("advertise");
 
       //categoris
       app.get('/categories',async(req,res)=>{
@@ -30,8 +29,8 @@ async function run() {
         res.send(categories)
       });
       app.get('/category/:id',async(req,res)=>{
-        const id = req.params.id;
-        const query = {cat_id:id};
+        const cat_name = req.params.id;
+        const query = {cat_name};
         const categories = await productsCollection.find(query).toArray();
         res.send(categories)
       });
@@ -90,6 +89,16 @@ async function run() {
     const bookings = await bookingsCollection.find(query).toArray();
     res.send(bookings);
 });
+app.get('/allproducts',async(req,res)=>{
+  const query = {};
+  const products = await productsCollection.find(query).toArray();
+  res.send(products)
+});
+app.get('/report',async(req,res)=>{
+  const query = {report:'reported'};
+  const buyers = await productsCollection.find(query).toArray();
+  res.send(buyers)
+});
 app.get('/products', async (req, res) => {
   const name = req.query.name;
   const query = { seller_name: name  };
@@ -107,15 +116,56 @@ app.delete('/products/:id', async (req, res) => {
   const result = await productsCollection.deleteOne(filter);
   res.send(result);
 })
-app.post('/advertise', async (req, res) => {
-  const products = req.body;
-  const result = await advertiseCollection.insertOne(products);
+app.put('/users/:email', async (req, res) => {
+  const email = req.params.email;
+  // console.log(email);
+  const filter = { email }
+  const options = { upsert: true };
+  const updatedDoc = {
+      $set: {
+        verified: 'verified'
+      }
+  }
+  
+  const result = await usersCollection.updateOne(filter, updatedDoc, options);
+  const updateProDoc = {
+    $set: {
+      verified: 'verified'
+    }
+}
+const proFilter = {seller_email:email}
+const updatedResult = await productsCollection.updateOne(proFilter, updateProDoc)
+  res.send(result);
+});
+
+app.put('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  const filter = { _id: ObjectId(id) }
+  const options = { upsert: true };
+  const updatedDoc = {
+      $set: {
+        report: 'reported'
+      }
+  }
+  const result = await productsCollection.updateOne(filter, updatedDoc, options);
+  res.send(result);
+});
+app.put('/allproducts/:id', async (req, res) => {
+  const id = req.params.id;
+  const filter = { _id: ObjectId(id) }
+  const options = { upsert: true };
+  const updatedDoc = {
+      $set: {
+        advertise: 'advertise'
+      }
+  }
+  const result = await productsCollection.updateOne(filter, updatedDoc, options);
   res.send(result);
 });
 app.get('/advertise',async(req,res)=>{
-  const query = {};
-  const categories = await advertiseCollection.find(query).toArray();
-  res.send(categories)
+  const query = {advertise:'advertise'};
+  const buyers = await productsCollection.find(query).toArray();
+  res.send(buyers)
 });
 
     } finally {
